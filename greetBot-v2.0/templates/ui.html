@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>GreetBot UI</title>
+</head>
+<body>
+  <h1 id="status">Waiting...</h1>
+
+  <script>
+    setInterval(() => {
+      fetch("/robot/status")
+        .then(res => res.json())
+        .then(data => {
+          if (data.mode === "talking") {
+            document.getElementById("status").innerText = "🎤 Talking...";
+          } else {
+            document.getElementById("status").innerText = "Waiting...";
+          }
+        });
+    }, 1000);
+  </script>
+</body>
+</html>
