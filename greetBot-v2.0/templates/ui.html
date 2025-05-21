@@ -1,24 +1,187 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>GreetBot UI</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GreetBot UI</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #e74c3c;
+            --secondary-dark: #c0392b;
+            --accent: #9b59b6;
+            --accent-dark: #8e44ad;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --background: #f5f7fa;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin-left: 10px;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .online {
+            background-color: var(--success);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: 20px;
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-top: 15px;
+        }
+
+        .footer {
+            padding: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+    </style>
 </head>
 <body>
-  <h1 id="status">Waiting...</h1>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span style="font-size: 2rem;">🤖</span>
+                <h1>GreetBot Interface</h1>
+            </div>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-indicator online"></span>
+                    <span>Connected</span>
+                </div>
+                <div class="status-item" id="robot-mode">
+                    Mode: Idle
+                </div>
+            </div>
+        </header>
 
-  <script>
-    setInterval(() => {
-      fetch("/robot/status")
-        .then(res => res.json())
-        .then(data => {
-          if (data.mode === "talking") {
-            document.getElementById("status").innerText = "🎤 Talking...";
-          } else {
-            document.getElementById("status").innerText = "Waiting...";
-          }
-        });
-    }, 1000);
-  </script>
+        <div class="main-content">
+            <div class="card" onclick="alert('Mini games coming soon!')">
+                <div class="card-header"><h2>Mini Games</h2></div>
+                <div class="card-icon">🎮</div>
+            </div>
+            <div class="card" onclick="alert('Agenda coming soon!')">
+                <div class="card-header"><h2>Event Agenda</h2></div>
+                <div class="card-icon">📅</div>
+            </div>
+            <div class="card" onclick="alert('Chatbot coming soon!')">
+                <div class="card-header"><h2>Chat with Me</h2></div>
+                <div class="card-icon">💬</div>
+            </div>
+            <div class="card" onclick="alert('Greeting will be played')">
+                <div class="card-header"><h2>Greeting</h2></div>
+                <div class="card-icon">👋</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">© 2025 GreetBot Project</div>
 </body>
 </html>

@@ -1,32 +1,265 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>GreetBot Control</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { text-align: center; background: #f4f4f4; padding: 20px; }
-    .btn-control { width: 100px; height: 100px; margin: 10px; font-size: 20px; }
-    .btn-wide { width: 220px; font-size: 18px; margin: 10px auto; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreetBot Controller</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #e74c3c;
+            --secondary-dark: #c0392b;
+            --background: #f5f7fa;
+            --text: #2c3e50;
+            --light: #ecf0f1;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+        }
+
+        .status {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background-color: #2ecc71;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+
+        .control-btn {
+            padding: 20px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 12px;
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .control-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .control-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-btn.stop {
+            background-color: var(--secondary);
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .control-btn.stop:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        .control-btn.up {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .control-btn.left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .control-btn.right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        .control-btn.down {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        .talk-btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3rem;
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        .talk-btn:hover {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .talk-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 480px) {
+            .control-btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>GreetBot Remote</h1>
-  <div><button class="btn btn-primary btn-control" onclick="sendCommand('forward')">Up</button></div>
-  <div>
-    <button class="btn btn-primary btn-control" onclick="sendCommand('left')">Left</button>
-    <button class="btn btn-danger btn-control" onclick="sendCommand('stop')">Stop</button>
-    <button class="btn btn-primary btn-control" onclick="sendCommand('right')">Right</button>
-  </div>
-  <div><button class="btn btn-primary btn-control" onclick="sendCommand('backward')">Down</button></div>
-  <hr />
-  <button class="btn btn-success btn-wide" onclick="sendCommand('start-talking')">Start Talking</button>
-  <button class="btn btn-secondary btn-wide" onclick="sendCommand('stop')">Reset</button>
+    <div class="container">
+        <header>
+            <h1>GreetBot Controller</h1>
+            <div class="status">
+                <span class="status-indicator"></span>
+                <span id="connection-status">Connected</span> | 
+                <span id="robot-status">Mode: Idle</span>
+            </div>
+        </header>
 
-  <script>
-    function sendCommand(cmd) {
-      fetch(`/phone/api/${cmd}`);
+        <div class="controls">
+            <button class="control-btn up" onclick="send('forward')">
+                ▲<br>Forward
+            </button>
+            <button class="control-btn left" onclick="send('left')">
+                ◄<br>Left
+            </button>
+            <button class="control-btn stop" onclick="send('stop')">
+                ■<br>Stop
+            </button>
+            <button class="control-btn right" onclick="send('right')">
+                ►<br>Right
+            </button>
+            <button class="control-btn down" onclick="send('backward')">
+                ▼<br>Backward
+            </button>
+        </div>
+        
+        <button class="talk-btn" onclick="startTalking()">
+            <span class="icon">🔊</span> Start Greeting
+        </button>
+        
+        <button class="talk-btn" style="background-color:#e74c3c; margin-top:10px;" onclick="resetRobot()">
+            <span class="icon">⏹️</span> End of Talk
+        </button>
+    </div>
+    
+        <footer>
+            GreetBot Controller v1.0 | Raspberry Pi 4
+        </footer>
+
+<script>
+   function send(cmd) {
+        fetch('/phone/api/' + cmd)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('robot-status').textContent = 'Mode: ' + data.mode;
+            })
+            .catch(() => alert('Error sending command'));
     }
-  </script>
+
+    function startTalking() {
+        fetch('/phone/api/start-talking')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('robot-status').textContent = 'Mode: ' + data.mode;
+            })
+            .catch(() => alert('Error starting greeting'));
+    }
+
+    function resetRobot() {
+        fetch('/phone/api/reset', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('robot-status').textContent = 'Mode: ' + data.mode;
+                alert("Robot reset! You can now control movement again.");
+            })
+            .catch(() => alert('Error resetting robot'));
+    }
+</script>
+
+
 </body>
 </html>

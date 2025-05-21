@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GreetBot Main</title>
+    <style>
+        body, html {
+            margin:0; padding:0; height:100%; overflow:hidden;
+            background-color: black;
+        }
+        #main-image {
+            width: 100vw; height: 100vh;
+            background: url('/static/img/main-page.jpg') no-repeat center center;
+            background-size: cover;
+        }
+        #card-video {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-image"></div>
+    <video id="card-video" src="/static/video/cardEjection.mp4" playsinline></video>
+
+   <script>
+    const video = document.getElementById('card-video');
+    const mainImage = document.getElementById('main-image');
+
+    async function checkStatus() {
+        try {
+            let res = await fetch('/robot/status');
+            let data = await res.json();
+
+            if (data.show_video) {
+                mainImage.style.display = 'none';
+                video.style.display = 'block';
+                if (video.paused) {
+                    video.play();
+                }
+            } else {
+                video.pause();
+                video.style.display = 'none';
+                mainImage.style.display = 'block';
+            }
+
+            // When mode is idle and video ended, redirect to /robot/ui
+            if (data.mode === 'idle' && video.ended) {
+                window.location.href = '/robot/ui';
+            }
+        } catch (e) {
+            console.error('Status fetch error:', e);
+        }
+    }
+
+    setInterval(checkStatus, 500);
+    checkStatus();
+
+    video.onended = () => {
+        checkStatus();
+    };
+</script>
+
+
+</body>
+</html>
