@@ -26,42 +26,41 @@
     <video id="card-video" src="/static/video/cardEjection.mp4" playsinline></video>
 
    <script>
-    const video = document.getElementById('card-video');
-    const mainImage = document.getElementById('main-image');
+  const video = document.getElementById('card-video');
+  const mainImage = document.getElementById('main-image');
 
-    async function checkStatus() {
-        try {
-            let res = await fetch('/robot/status');
-            let data = await res.json();
+  async function checkStatus() {
+    try {
+      const response = await fetch('/robot/status');
+      const data = await response.json();
 
-            if (data.show_video) {
-                mainImage.style.display = 'none';
-                video.style.display = 'block';
-                if (video.paused) {
-                    video.play();
-                }
-            } else {
-                video.pause();
-                video.style.display = 'none';
-                mainImage.style.display = 'block';
-            }
+      if (data.show_video) {
+        mainImage.style.display = 'none';
+        video.style.display = 'block';
+        if (video.paused) video.play();
+      } else {
+        video.pause();
+        video.style.display = 'none';
+        mainImage.style.display = 'block';
+      }
 
-            // When mode is idle and video ended, redirect to /robot/ui
-            if (data.mode === 'idle' && video.ended) {
-                window.location.href = '/robot/ui';
-            }
-        } catch (e) {
-            console.error('Status fetch error:', e);
-        }
+      // Redirect to /robot/ui after video ends and mode is idle
+      if (data.mode === 'idle' && video.ended) {
+        window.location.href = '/robot/ui';
+      }
+    } catch (error) {
+      console.error('Error fetching robot status:', error);
     }
+  }
 
-    setInterval(checkStatus, 500);
+  setInterval(checkStatus, 500);
+  checkStatus();
+
+  video.onended = () => {
     checkStatus();
-
-    video.onended = () => {
-        checkStatus();
-    };
+  };
 </script>
+
 
 
 </body>
