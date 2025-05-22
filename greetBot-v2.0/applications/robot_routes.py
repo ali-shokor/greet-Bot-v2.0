@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, jsonify
 import shared
 import pygame
 import threading
+import time
 
 robot_bp = Blueprint('robot', __name__, template_folder='../templates')
 
@@ -20,7 +21,7 @@ def play_greeting_sequence():
     while pygame.mixer.music.get_busy():
         pygame.time.wait(100)
 
-    # Play the take card sound
+    # Play the take card sound and show video
     shared.robot_state["step"] = "card_sound"
     shared.robot_state["show_video"] = True
     pygame.mixer.music.load("static/sounds/card/takeYourCard.wav")
@@ -28,14 +29,14 @@ def play_greeting_sequence():
     while pygame.mixer.music.get_busy():
         pygame.time.wait(100)
 
-    # After sounds finish, hide video, update shared state, and redirect to /robot/ui
-    shared.robot_state["show_video"] = False
-    shared.robot_state["mode"] = "idle"
-    shared.robot_state["step"] = None
+    # Add a small delay to ensure video plays completely
+    time.sleep(1)
 
-    # Redirect to the UI page (this is handled on the frontend based on robot state)
-    shared.robot_state["mode"] = "idle"
-    shared.robot_state["step"] = None
+    # After sounds finish, hide video and prepare for UI redirect
+    print("Greeting sequence finished, setting mode=show_ui and show_video=False")
+    shared.robot_state["show_video"] = False
+    shared.robot_state["mode"] = "show_ui"
+    shared.robot_state["step"] = "redirect_to_ui"  # Add this step for better tracking
 
 @robot_bp.route('/')
 def main_page():
@@ -55,4 +56,15 @@ def start_greeting():
 
 @robot_bp.route('/ui')
 def robot_ui():
+    # When UI page is accessed, reset the state to idle
+    shared.robot_state["mode"] = "ui_active"
+    shared.robot_state["step"] = None
     return render_template('ui.html')
+
+# Add a reset route
+@robot_bp.route('/reset', methods=['POST'])
+def reset_robot():
+    shared.robot_state["mode"] = "idle"
+    shared.robot_state["show_video"] = False
+    shared.robot_state["step"] = None
+    return jsonify(status="reset")

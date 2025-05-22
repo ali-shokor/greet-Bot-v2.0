@@ -1,4 +1,7 @@
+# shared.py
+
 robot_state = {
-    "mode": "idle",            # idle, greeting, card_eject, done
-    "greeting_step": 0         # 0 = none, 1 = playing welcome, 2 = playing card sound
+    "mode": "idle",          # current robot mode: idle, greeting, etc.
+    "show_video": False,     # True while card ejection video is playing
+    "step": None             # Optional step tracking
 }

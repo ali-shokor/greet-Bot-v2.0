@@ -1,8 +1,8 @@
+from flask import Flask, redirect
 from applications.robot_routes import robot_bp
 from applications.phone_routes import phone_bp
-from flask import Flask, redirect
 
-
+# Create Flask app instance - THIS WAS MISSING!
 app = Flask(__name__)
 
 # Register blueprints with URL prefixes

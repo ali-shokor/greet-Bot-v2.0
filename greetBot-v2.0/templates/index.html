@@ -25,43 +25,60 @@
     <div id="main-image"></div>
     <video id="card-video" src="/static/video/cardEjection.mp4" playsinline></video>
 
-   <script>
-  const video = document.getElementById('card-video');
-  const mainImage = document.getElementById('main-image');
+    <script>
+        const video = document.getElementById('card-video');
+        const mainImage = document.getElementById('main-image');
+        let shouldRedirect = false;
+        let statusCheckInterval;
 
-  async function checkStatus() {
-    try {
-      const response = await fetch('/robot/status');
-      const data = await response.json();
+        async function checkStatus() {
+            try {
+                const res = await fetch('/robot/status');
+                const data = await res.json();
+                console.log("Status:", data);
 
-      if (data.show_video) {
-        mainImage.style.display = 'none';
-        video.style.display = 'block';
-        if (video.paused) video.play();
-      } else {
-        video.pause();
-        video.style.display = 'none';
-        mainImage.style.display = 'block';
-      }
+                if (data.show_video) {
+                    mainImage.style.display = 'none';
+                    video.style.display = 'block';
+                    if (video.paused) {
+                        await video.play().catch(e => console.log("Play prevented:", e));
+                    }
+                } else if (data.mode === 'show_ui') {
+                    // If mode is show_ui and video is not showing, redirect immediately
+                    console.log("Mode is show_ui, redirecting to UI");
+                    clearInterval(statusCheckInterval);
+                    window.location.href = '/robot/ui';
+                } else if (!data.show_video && data.mode !== 'greeting') {
+                    // Show main image when not in greeting mode and not showing video
+                    video.pause();
+                    video.style.display = 'none';
+                    mainImage.style.display = 'block';
+                }
+            } catch (err) {
+                console.error('Failed to fetch robot status', err);
+            }
+        }
 
-      // Redirect to /robot/ui after video ends and mode is idle
-      if (data.mode === 'idle' && video.ended) {
-        window.location.href = '/robot/ui';
-      }
-    } catch (error) {
-      console.error('Error fetching robot status:', error);
-    }
-  }
+        // Handle video end event
+        video.onended = () => {
+            console.log("Video ended event triggered");
+            // Set a flag to check for redirect on next status check
+            shouldRedirect = true;
+            video.style.display = 'none';
+            mainImage.style.display = 'block';
+        };
 
-  setInterval(checkStatus, 500);
-  checkStatus();
+        // Handle video error
+        video.onerror = (e) => {
+            console.error("Video error:", e);
+            video.style.display = 'none';
+            mainImage.style.display = 'block';
+        };
 
-  video.onended = () => {
-    checkStatus();
-  };
-</script>
-
-
+        // Start polling every 500ms
+        statusCheckInterval = setInterval(checkStatus, 500);
+        checkStatus(); // Initial check
+    </script>
 
 </body>
 </html>
